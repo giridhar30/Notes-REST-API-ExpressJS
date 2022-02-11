@@ -2,12 +2,15 @@ const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv/config");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const app = express();
 const port = 3000;
 
 // using a middleware to parse request bodies for all requests
 app.use(bodyParser.json());
+// middleware to config cors
+app.use(cors());
 
 // messy code...
 /* // adding middlewares
