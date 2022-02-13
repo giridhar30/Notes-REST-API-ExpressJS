@@ -1,36 +1,32 @@
 const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv/config");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-
 const app = express();
 const port = 3000;
 
+const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+
 // using a middleware to parse request bodies for all requests
-app.use(bodyParser.json());
+app.use(express.json());
 // middleware to config cors
 app.use(cors());
-
-// messy code...
-/* // adding middlewares
-app.use("/", () => console.log("request to home!"));
-
-// defining routes
-app.get("/", (req, res) => res.send("site under construction")); */
 
 // importing routes
 const homeRoute = require("./routes/home");
 const postsRoute = require("./routes/posts");
+const authRoute = require("./routes/auth");
 
 // using middlewares to link routes
 app.use("/", homeRoute);
 app.use("/posts", postsRoute);
+app.use("/api/user", authRoute);
 
 // connecting to DB
+dotenv.config();
 const options = {
   useNewUrlParser: true,
 };
+
 mongoose.connect(process.env.DB_URL, options, (err) => {
   if (err) {
     console.log(`${err} connecting to DB`);
