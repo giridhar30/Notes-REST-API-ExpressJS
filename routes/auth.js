@@ -1,6 +1,7 @@
 const bcryptjs = require("bcryptjs");
 const express = require("express");
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 const { validateRegistration } = require("../validation");
 const router = express.Router();
 
@@ -30,6 +31,25 @@ router.post("/register", async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: `${err} is the error` });
   }
+});
+
+router.post("/login", async (req, res) => {
+  // checking if user exists in db
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) return res.status(400).json({ error: "Invalid User" });
+
+  // checking if the password is correct
+  const validPassword = await bcryptjs.compare(
+    req.body.password,
+    user.password
+  );
+  if (!validPassword)
+    return res.status(400).json({ error: "Invalid Password" });
+
+  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_PVT_KEY);
+  res
+    .header("auth-token", token)
+    .json({ success: true, message: "logged in", token: token });
 });
 
 module.exports = router;
