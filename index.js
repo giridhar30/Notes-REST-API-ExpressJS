@@ -18,7 +18,7 @@ const authRoute = require("./routes/auth");
 
 // using middlewares to link routes
 app.use("/", homeRoute);
-app.use("/posts", postsRoute);
+app.use("/api/posts", postsRoute);
 app.use("/api/user", authRoute);
 
 // connecting to DB
