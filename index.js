@@ -12,13 +12,13 @@ app.use(express.json());
 app.use(cors());
 
 // importing routes
-const homeRoute = require("./routes/home");
-const postsRoute = require("./routes/posts");
-const authRoute = require("./routes/auth");
+const homeRoute = require("./routes/home.route");
+const notesRoute = require("./routes/notes.route");
+const authRoute = require("./routes/auth.route");
 
 // using middlewares to link routes
 app.use("/", homeRoute);
-app.use("/api/posts", postsRoute);
+app.use("/api/notes", notesRoute);
 app.use("/api/user", authRoute);
 
 // connecting to DB
@@ -31,7 +31,7 @@ mongoose.connect(process.env.DB_URL, options, (err) => {
   if (err) {
     console.log(`${err} connecting to DB`);
   } else {
-    console.log("Connected to postsApp DB!");
+    console.log("Connected to notesApp DB!");
   }
 });
 

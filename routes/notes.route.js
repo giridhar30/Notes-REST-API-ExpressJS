@@ -1,65 +1,65 @@
 const express = require("express");
-const Post = require("../models/Post");
+const Note = require("../models/note.model");
 const verifyToken = require("../verifyToken");
 const router = express.Router();
 
-// fetching all the posts
+// fetching all the notes
 router.get("/", verifyToken, async (req, res) => {
-  const fetchedPosts = await Post.find();
-  res.json(fetchedPosts);
+  const fetchedNotes = await Note.find();
+  res.json(fetchedNotes);
 });
 
-// fetching a specific post
-router.get("/:postId", verifyToken, async (req, res) => {
+// fetching a specific note
+router.get("/:noteId", verifyToken, async (req, res) => {
   try {
-    const specifiedPost = await Post.findById(req.params.postId);
-    res.json(specifiedPost);
+    const specifiedNote = await Note.findById(req.params.noteId);
+    res.json(specifiedNote);
   } catch (err) {
     res.status(400).json({ message: `${err} is the error` });
   }
 });
 
-// posting a post
+// posting a note
 router.post("/", verifyToken, async (req, res) => {
-  const post = new Post({
+  const note = new Note({
     title: req.body.title,
     body: req.body.body,
   });
 
   // old promise method
-  // post
+  // note
   //   .save()
   //   .then((data) => res.json(data))
   //   .catch((err) => res.json({ message: `${err} is the error` }));
 
   // new promise method
   try {
-    const savedPost = await post.save();
+    const savedNote = await note.save();
 
-    res.json(savedPost);
+    res.json(savedNote);
   } catch (err) {
     res.status(400).json({ message: `${err} is the error` });
   }
 });
 
-// deleting a post
-router.delete("/:postId", verifyToken, async (req, res) => {
+// deleting a note
+router.delete("/:noteId", verifyToken, async (req, res) => {
   try {
-    const deletedPost = await Post.remove({ _id: req.params.postId });
-    res.json(deletedPost);
+    const deletedNote = await Note.remove({ _id: req.params.noteId });
+    res.json(deletedNote);
   } catch (err) {
     res.status(400).json({ message: `${err} is the error` });
   }
 });
 
-// updating a post
-router.patch("/:postId", verifyToken, async (req, res) => {
+// updating a note
+router.patch("/:noteId", verifyToken, async (req, res) => {
   try {
-    const updatedPost = await Post.updateOne(
-      { _id: req.params.postId },
+    const updatedNote = await Note.updateOne(
+      { _id: req.params.noteId },
       { $set: { title: req.body.title } }
     );
-    res.json(updatedPost);
+    res.json(updatedNote);
   } catch (err) {
     res.status(400).json({ message: `${err} is the error` });
   }
