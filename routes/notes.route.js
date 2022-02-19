@@ -5,7 +5,7 @@ const router = express.Router();
 
 // fetching all the notes
 router.get("/", verifyToken, async (req, res) => {
-  const fetchedNotes = await Note.find();
+  const fetchedNotes = await Note.find({ user: req.user.email });
   res.json(fetchedNotes);
 });
 
@@ -13,6 +13,8 @@ router.get("/", verifyToken, async (req, res) => {
 router.get("/:noteId", verifyToken, async (req, res) => {
   try {
     const specifiedNote = await Note.findById(req.params.noteId);
+    if (specifiedNote.user !== req.user.email)
+      return res.status(401).json({ error: "unauthorized access" });
     res.json(specifiedNote);
   } catch (err) {
     res.status(400).json({ message: `${err} is the error` });
@@ -24,6 +26,7 @@ router.post("/", verifyToken, async (req, res) => {
   const note = new Note({
     title: req.body.title,
     body: req.body.body,
+    user: req.user.email,
   });
 
   // old promise method
@@ -45,7 +48,10 @@ router.post("/", verifyToken, async (req, res) => {
 // deleting a note
 router.delete("/:noteId", verifyToken, async (req, res) => {
   try {
-    const deletedNote = await Note.remove({ _id: req.params.noteId });
+    const deletedNote = await Note.remove({
+      _id: req.params.noteId,
+      user: req.user.email,
+    });
     res.json(deletedNote);
   } catch (err) {
     res.status(400).json({ message: `${err} is the error` });
@@ -56,7 +62,7 @@ router.delete("/:noteId", verifyToken, async (req, res) => {
 router.patch("/:noteId", verifyToken, async (req, res) => {
   try {
     const updatedNote = await Note.updateOne(
-      { _id: req.params.noteId },
+      { _id: req.params.noteId, user: req.user.email },
       { $set: { title: req.body.title } }
     );
     res.json(updatedNote);
